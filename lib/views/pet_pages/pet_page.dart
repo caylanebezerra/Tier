@@ -44,7 +44,7 @@ class _PetPageState extends State<PetPage> {
                 height: MediaQuery
                     .of(context)
                     .size
-                    .width / 1.8,
+                    .width / 1.5,
 
                 decoration: BoxDecoration(
                     image: DecorationImage(
@@ -58,7 +58,7 @@ class _PetPageState extends State<PetPage> {
           ///button to back
           Positioned(
               top: 45,
-              left: 20,
+              left: 0,
               right: 330,
               child:IconButton(
 
@@ -81,7 +81,7 @@ class _PetPageState extends State<PetPage> {
               top: MediaQuery
                   .of(context)
                   .size
-                  .height / 4.2,
+                  .height / 3.5,
               child: Container(
                 padding: EdgeInsets.only(left: 18, right: 18, top: 18,),
                 decoration: BoxDecoration(
@@ -123,8 +123,12 @@ class _PetPageState extends State<PetPage> {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(50),
                           ),
-                          child: FutureBuilder<ModelUsers?>(
-    future: readUser2(idUsuario == null ? '6GqG7AT0zqoOSIOrobTy' : idUsuario!),
+                          child:(idUsuario == null )? StarButton(
+                              iconSize: 60,
+                              valueChanged: (){
+
+                              }) : FutureBuilder<ModelUsers?>(
+    future: readUser2( idUsuario!),
     builder: (context, snapshot){
     if(snapshot.hasError){
     return Text('Something went wrong!1 ${snapshot.error}');
@@ -199,7 +203,7 @@ class _PetPageState extends State<PetPage> {
                           SizedBox(width: MediaQuery
                               .of(context)
                               .size
-                              .width / 22,),
+                              .width / 25,),
                           Container(
                             padding: EdgeInsets.only(top: MediaQuery
                                 .of(context)
@@ -254,7 +258,7 @@ class _PetPageState extends State<PetPage> {
                           SizedBox(width: MediaQuery
                               .of(context)
                               .size
-                              .width / 22,),
+                              .width / 25,),
                           Container(
                             padding: EdgeInsets.only(top: MediaQuery
                                 .of(context)
@@ -279,7 +283,7 @@ class _PetPageState extends State<PetPage> {
                             child: Column(
 
                               children: [
-                                Text("Pequeno", style: GoogleFonts.poppins(
+                                Text(widget.pet.portePet, style: GoogleFonts.poppins(
                                     fontSize: MediaQuery
                                         .of(context)
                                         .size
@@ -301,6 +305,7 @@ class _PetPageState extends State<PetPage> {
                     ///informacoes do dono
 
                     streamInfoDono(id: widget.pet.idUsuario),
+                    SizedBox(height: 30),
 
 
 
@@ -313,7 +318,11 @@ class _PetPageState extends State<PetPage> {
 
 
                     //botao de adotar
-                    Container(
+                    GestureDetector(
+                      onTap: (){
+
+                      },
+                     child: Container(
                       padding: EdgeInsets.only(
                           top: 5, bottom: 5, left: 30, right: 30),
                       decoration: BoxDecoration(
@@ -326,7 +335,10 @@ class _PetPageState extends State<PetPage> {
                             .size
                             .width / 20),),
                     ),
+                   
+                    ), 
                     SizedBox(height: 500,)
+                    
                   ],
 
 
@@ -345,8 +357,8 @@ class _PetPageState extends State<PetPage> {
         if (snapshot.hasError){
           return Text('Something went wrong! ${snapshot.error}');
         } else if (snapshot.hasData){
-          final users = snapshot.data;
-          return infoDono(users!, users.idUsuario!, context) ;
+          final dono = snapshot.data;
+          return infoDono(dono!, dono.idUsuario!, context) ;
         } else{
 
           return const Center(child: CircularProgressIndicator(),);
@@ -383,7 +395,7 @@ class _PetPageState extends State<PetPage> {
               children: [
                 CircleAvatar(
                   radius: 32,
-                  child: Container(
+                  child:  (user.fotoUsuario==null) ?Container() :  Container(
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(400),
@@ -442,40 +454,36 @@ class _PetPageState extends State<PetPage> {
           ),
           SizedBox(height: 8,),
           //descricao do dono
-          Padding(
-            padding: const EdgeInsets.only(
-                left: 11, right: 11, top: 11, bottom: 0),
-            child: Text(user.descricaoUsuario!,
-              style: GoogleFonts.poppins(fontSize: MediaQuery
+
+          Row(
+            children: [
+
+              Text("Descrição pet:",style: GoogleFonts.poppins(fontSize: MediaQuery
                   .of(context)
+
+
+
                   .size
-                  .width / 25),),
-          ),
-          Padding(
-              padding: const EdgeInsets.all(11.0),
-              child: Row(
-                children: [
-                  Text("Descrição pet:", style: GoogleFonts.poppins(fontSize: MediaQuery
-                      .of(context)
-                      .size
-                      .width / 25)),
-                  SizedBox(width: 4,),
-                  Text(widget.pet.descricaoPet,
-                      style: GoogleFonts.poppins(fontSize: MediaQuery
-                          .of(context)
-                          .size
-                          .width / 25)),
+                  .width / 25)),
+              SizedBox(width: 6,),
+              Expanded(
+                child: Text(widget.pet.descricaoPet,
+                    overflow: true? TextOverflow.clip : TextOverflow.visible,
+                    style: GoogleFonts.poppins(fontSize: MediaQuery
+                        .of(context)
+                        .size
+                        .width / 25)),
+              ),
 
-                  SizedBox(width: 10,),
-                  /*Text("Mostrar mais",
-                            style: GoogleFonts.poppins(color: Colors
-                                .orangeAccent, fontSize: MediaQuery
-                                .of(context)
-                                .size
-                                .width / 46),),*/
-                ],
+              SizedBox(height: 10,),
+              /*Text("Mostrar mais",
+                        style: GoogleFonts.poppins(color: Colors
+                            .orangeAccent, fontSize: MediaQuery
+                            .of(context)
+                            .size
+                            .width / 46),),*/
+            ],
 
-              )
           ),
         ],
       ),

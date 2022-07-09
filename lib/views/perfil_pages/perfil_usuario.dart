@@ -1,10 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:tier/views/auth_page.dart';
+import 'package:tier/views/pedidos_users/meus_pedidos.dart';
+import 'package:tier/views/configuracoes_pages/cadastre_sua_loja.dart';
 import 'package:tier/views/perfil_pages/cupom_perfil.dart';
+import 'package:tier/views/perfil_pages/enderecos.dart';
 import 'package:tier/views/perfil_pages/meu_codigo_perfil.dart';
 import 'package:tier/widgets/perfil_pages/editar_meu_perfil.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../colors.dart';
 import '../../widgets/bottom_nav_bar.dart';
@@ -146,7 +151,9 @@ class _TelaPerfilUsuarioState extends State<TelaPerfilUsuario> {
                     Row(
                       children: [
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MeusPedidos()));
+                          },
                           child: Container(
                             width: (MediaQuery.of(context).size.width - 60) / 2,
                             height: 110,
@@ -190,13 +197,13 @@ class _TelaPerfilUsuarioState extends State<TelaPerfilUsuario> {
                                     ),
                                     RichText(
                                       text: TextSpan(
-                                          text: 'Meus\n',
+                                          text: AppLocalizations.of(context)!.my,
                                           style: GoogleFonts.poppins(
                                               fontSize: 18,
                                               color: AppColor.textosPretos3),
-                                          children: const [
+                                          children: [
                                             TextSpan(
-                                              text: 'pedidos',
+                                              text: AppLocalizations.of(context)!.orders,
                                             )
                                           ]),
                                     )
@@ -211,7 +218,7 @@ class _TelaPerfilUsuarioState extends State<TelaPerfilUsuario> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Navigator.pushReplacement(
+                            Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => NivelUsuario(),
@@ -259,7 +266,7 @@ class _TelaPerfilUsuarioState extends State<TelaPerfilUsuario> {
                                       width: 5,
                                     ),
                                     Text(
-                                      'Nível',
+                                      AppLocalizations.of(context)!.level,
                                       style: GoogleFonts.poppins(
                                         fontSize: 18,
                                         color: AppColor.textosPretos3,
@@ -282,19 +289,23 @@ class _TelaPerfilUsuarioState extends State<TelaPerfilUsuario> {
               GestureDetector(
                 onTap: () {
                   if (idUsuario == null) {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              authPage(), //COLOCAR O CENTER SE NÃO TIVER ESSA PAGINA NO SEU ARQUIVO
-                        ));
+                    showCupertinoModalBottomSheet(
+                      enableDrag: true,
+                        topRadius: const Radius.circular(30),
+                        barrierColor: const Color.fromARGB(100, 0, 0, 0),
+                        context: context,
+                        builder: (context) => Container(
+                          height: MediaQuery.of(context).size.height/1.18,
+                          child: const authPage(),
+                        )
+                    );
                   } else {
                     Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              MeuPerfil(), //COLOCAR O CENTER SE NÃO TIVER ESSA PAGINA NO SEU ARQUIVO
-                        ));
+                      context,
+                      MaterialPageRoute(
+                       builder: (context) =>
+                          MeuPerfil()
+                      ));
                   }
                 },
                 child: Container(
@@ -321,7 +332,61 @@ class _TelaPerfilUsuarioState extends State<TelaPerfilUsuario> {
                             ),
                             Expanded(
                               child: Text(
-                                'Meu Perfil',
+                                AppLocalizations.of(context)!.my_profile,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 20,
+                                  color: AppColor.textosPretos3,
+                                ),
+                              ),
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios_outlined,
+                              color: AppColor.textosPretos2.withOpacity(0.8),
+                            ),
+                            const SizedBox(
+                              width: 15,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            Cadastro_Loja(), //COLOCAR O CENTER SE NÃO TIVER ESSA PAGINA NO SEU ARQUIVO
+                      ));
+                },
+                child: Container(
+                  height: 60,
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 1,
+                        color: AppColor.cinzaClaro.withOpacity(0.6),
+                      ),
+                      Container(
+                        height: 58,
+                        child: Row(
+                          children: [
+                            const SizedBox(
+                              width: 15,
+                            ),
+                            Icon(
+                              Icons.perm_identity,
+                              color: AppColor.textosPretos3,
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Expanded(
+                              child: Text(
+                                AppLocalizations.of(context)!.sign_up_your_store,
                                 style: GoogleFonts.poppins(
                                   fontSize: 20,
                                   color: AppColor.textosPretos3,
@@ -371,7 +436,7 @@ class _TelaPerfilUsuarioState extends State<TelaPerfilUsuario> {
                             ),
                             Expanded(
                               child: Text(
-                                'Cupons',
+                                AppLocalizations.of(context)!.coupons,
                                 style: GoogleFonts.poppins(
                                   fontSize: 20,
                                   color: AppColor.textosPretos3,
@@ -418,7 +483,7 @@ class _TelaPerfilUsuarioState extends State<TelaPerfilUsuario> {
                             ),
                             Expanded(
                               child: Text(
-                                'Carteira',
+                                AppLocalizations.of(context)!.wallet,
                                 style: GoogleFonts.poppins(
                                   fontSize: 20,
                                   color: AppColor.textosPretos3,
@@ -471,7 +536,7 @@ class _TelaPerfilUsuarioState extends State<TelaPerfilUsuario> {
                             ),
                             Expanded(
                               child: Text(
-                                'Assinatura',
+                                AppLocalizations.of(context)!.signature,
                                 style: GoogleFonts.poppins(
                                   fontSize: 20,
                                   color: AppColor.textosPretos3,
@@ -497,7 +562,26 @@ class _TelaPerfilUsuarioState extends State<TelaPerfilUsuario> {
                 ),
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  if (idUsuario == null) {
+                    showCupertinoModalBottomSheet(
+                        enableDrag: true,
+                        bounce: true,
+                        topRadius: Radius.circular(30),
+                        barrierColor: Color.fromARGB(100, 0, 0, 0),
+                        context: context,
+                        builder: (context) => Container(
+                          height: MediaQuery.of(context).size.height / 1.18,
+                          child: authPage(),
+                        ));
+                  } else {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EnderecosPage(),
+                      ));
+                  }
+                },
                 child: Container(
                   height: 59,
                   child: Column(
@@ -518,7 +602,7 @@ class _TelaPerfilUsuarioState extends State<TelaPerfilUsuario> {
                             ),
                             Expanded(
                               child: Text(
-                                'Endereços',
+                                AppLocalizations.of(context)!.adresses,
                                 style: GoogleFonts.poppins(
                                   fontSize: 20,
                                   color: AppColor.textosPretos3,
@@ -568,7 +652,7 @@ class _TelaPerfilUsuarioState extends State<TelaPerfilUsuario> {
                             ),
                             Expanded(
                               child: Text(
-                                'Meu código',
+                                AppLocalizations.of(context)!.my_code,
                                 style: GoogleFonts.poppins(
                                   fontSize: 20,
                                   color: AppColor.textosPretos3,
@@ -618,7 +702,7 @@ class _TelaPerfilUsuarioState extends State<TelaPerfilUsuario> {
                             ),
                             Expanded(
                               child: Text(
-                                'Configurações',
+                                AppLocalizations.of(context)!.settings,
                                 style: GoogleFonts.poppins(
                                   fontSize: 20,
                                   color: AppColor.textosPretos3,

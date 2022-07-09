@@ -5,6 +5,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tier/colors.dart';
 import 'package:tier/views/perfil_pages/assinatura/assinatura_second.dart';
+import 'package:tier/views/perfil_pages/assinatura/prodAssinados.dart';
 
 import '../../../widgets/bottom_nav_bar.dart';
 import '../../main_lojas.dart';
@@ -30,7 +31,8 @@ class _AssinaturaState extends State<Assinatura> {
           icon: const Icon(Icons.arrow_back_ios),
         ),
         title: Container(
-          margin: EdgeInsetsDirectional.fromSTEB(58, 0, 0, 0),
+          //alignment: Alignment.topCenter,
+          //margin: EdgeInsetsDirectional.fromSTEB(58, 0, 0, 0),
           child: const Text(
             'ASSINATURA',
             style: TextStyle(
@@ -40,6 +42,7 @@ class _AssinaturaState extends State<Assinatura> {
             ),
           ),
         ),
+        centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
         bottom: PreferredSize(
@@ -197,26 +200,27 @@ class _AssinaturaState extends State<Assinatura> {
               Center(
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.pushReplacement(
+                    Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => MainLojas(),
+                          builder: (context) => ProdAssinados(),
                         ));
                   },
                   child: Container(
-                    margin: EdgeInsets.fromLTRB(0, 20, 0, 40),
-                    height: 70,
-                    width: (MediaQuery.of(context).size.width - 150),
+                    margin: EdgeInsets.fromLTRB(0, 30, 0, 40),
+                    height: 60,
+                    width: (MediaQuery.of(context).size.width - 100),
                     decoration: BoxDecoration(
                       color: AppColor.amareloEscuro,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Center(
-                      child: Text(
-                        'Ir para loja',
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: const Text(
+                        'Produtos Assinados',
                         style: TextStyle(
                           color: Color.fromRGBO(27, 27, 27, 0.8),
-                          fontSize: 25,
+                          fontSize: 20,
                           fontWeight: FontWeight.w500,
                         ),
                       ),

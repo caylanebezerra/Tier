@@ -28,16 +28,23 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   CollectionReference chats = FirebaseFirestore.instance.collection('chats');
+  CollectionReference usuarios = FirebaseFirestore.instance.collection('usuarios');
 
   var chatDocId;
- // final currentUserId = FirebaseAuth.instance.currentUser?.uid; 
-  final currentUserId = "g6afMeF0UzD6u7XgNrRe";
+  var nomeUsuario;
+ final currentUserId = FirebaseAuth.instance.currentUser?.uid; 
+  
   final _textController = TextEditingController();
    @override
   void initState() {
     super.initState();
+    pegarNomeUser();
     checkUser();
+  
+   
+    
   }
+
 
   void checkUser() async {
     await chats
@@ -55,17 +62,43 @@ class _ChatScreenState extends State<ChatScreen> {
             } else {
               await chats.add({
                 'users': {currentUserId: null, widget.friendUid: null},
-                'names':{currentUserId:"Antonio Jose",widget.friendUid:widget.friendName }
-              }).then((value) => {chatDocId = value});
+                'names':{currentUserId:nomeUsuario.toString(),widget.friendUid:widget.friendName }
+              }).then((value)  {
+                   setState(() {
+                chatDocId = value.id;
+              });
+              // chatDocId = value;
+                });
             }
           },
         )
         .catchError((error) {});
   }
+ 
+
+void pegarNomeUser() async{
+     
+       
+   
+    await usuarios
+        .doc(currentUserId)
+        .get()
+        .then((DocumentSnapshot ds) {
+           
+          print(ds.get('nomeUsuario').toString());
+         setState(() {
+            nomeUsuario = ds.get('nomeUsuario').toString();
+         });
+         
+      // use ds as a snapshot
+    });
+    
+}
+
 void sendMessage(String msg) {
    
     if (msg == '') return;
-    
+    print('enviando msg');
    
     chats.doc(chatDocId).collection('messages').add({
       'createdOn': FieldValue.serverTimestamp(),
@@ -104,7 +137,8 @@ bool isSender(String friend) {
             icon: const Icon(Icons.send),
             iconSize: 25.0,
             color: Theme.of(context).primaryColor,
-            onPressed: () => /*print("onpressed")*/ sendMessage(_textController.text),
+            
+            onPressed: () => /*print("onpressed")*/ sendMessage(_textController.text.toString()),
           ),
         ],
       ),

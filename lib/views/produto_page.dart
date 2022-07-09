@@ -1,13 +1,20 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:tier/firebase/loja_helper.dart';
+import 'package:tier/views/auth_page.dart';
+import 'package:tier/views/perfil_pages/assinatura/assinatura_second.dart';
 import 'package:tier/widgets/carrinho_widgets/carrinho_functions.dart';
 import 'package:tier/widgets/carrinho_widgets/modal_loja_diferente.dart';
+import 'package:tier/widgets/carrinho_widgets/modal_sem_user.dart';
 
 import '../colors.dart';
 import '../firebase/produto_helper.dart';
 //import '../widgets/bottom_nav_bar.dart';
+
+//var user = FirebaseAuth.instance.currentUser;
 
 class ProdutoPage extends StatefulWidget {
   final Produto produto;
@@ -21,6 +28,38 @@ class ProdutoPage extends StatefulWidget {
 
 class _ProdutoPageState extends State<ProdutoPage> {
   int qnt = 1;
+
+  var cor = Colors.yellow;
+
+  CollectionReference usuarios =
+      FirebaseFirestore.instance.collection('usuarios');
+  String? currentUserId = FirebaseAuth.instance.currentUser?.uid;
+
+  bool produtoAssinado = true;
+  void checarAssinatura() async {
+    await usuarios
+        .doc(currentUserId)
+        .collection('assinatura')
+        .where('idProduto', isEqualTo: widget.produto.id)
+        .limit(1)
+        .get()
+        .then((QuerySnapshot querySnapshot) async {
+      if (querySnapshot.docs.single.exists) {
+        setState(() {
+          produtoAssinado = false;
+        });
+      } else {
+        setState(() {
+          produtoAssinado = true;
+        });
+      }
+    });
+  }
+
+  void initState() {
+    super.initState();
+    checarAssinatura();
+  }
 
   aumentar() {
     setState(() {
@@ -37,6 +76,8 @@ class _ProdutoPageState extends State<ProdutoPage> {
       }
     });
   }
+
+  var user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +171,27 @@ class _ProdutoPageState extends State<ProdutoPage> {
                       }),
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    if (currentUserId == null) {
+                      showCupertinoModalBottomSheet(
+                          enableDrag: true,
+                          topRadius: const Radius.circular(30),
+                          barrierColor: const Color.fromARGB(100, 0, 0, 0),
+                          context: context,
+                          builder: (context) => Container(
+                                height:
+                                    MediaQuery.of(context).size.height / 1.18,
+                                child: const authPage(),
+                              ));
+                    } else if (produtoAssinado) {
+                      //print(verifProdAssinado());
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  AssinaturaSecond(produto: widget.produto)));
+                    }
+                  },
                   child: Container(
                     margin: const EdgeInsets.only(
                         left: 15, right: 15, top: 5, bottom: 15),
@@ -140,7 +201,10 @@ class _ProdutoPageState extends State<ProdutoPage> {
                         alignment: Alignment.center,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 15, vertical: 15),
-                        decoration: BoxDecoration(color: AppColor.cinzaBranco),
+                        decoration: BoxDecoration(
+                            color: produtoAssinado
+                                ? AppColor.amareloEscuro
+                                : AppColor.cinzaClaro),
                         child: Text(
                           'Adicionar à Assinatura',
                           style: GoogleFonts.poppins(
@@ -254,37 +318,69 @@ class _ProdutoPageState extends State<ProdutoPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          GestureDetector(
-            onTap: () async {
-              final aux = await verificaLoja(widget.lojaId, "André");
-              final index = await verificaProduto(widget.produto.id, "André");
-              if (index >= 0) {
-                final num valor = widget.produto.promocao ? widget.produto.novoValor : widget.produto.valor;
-                final produto = ShopProd(idProduto: widget.produto.id, idLoja: widget.lojaId, quantidade: qnt, valor: valor);
-                mudarQnt('André', index, qnt, produto.toJson());
-                Navigator.of(context).pop();
-              } else {
-                if(aux == 1){
-                  final num valor = widget.produto.promocao ? widget.produto.novoValor : widget.produto.valor;
-                  final produto = ShopProd(idProduto: widget.produto.id, idLoja: widget.lojaId, quantidade: qnt, valor: valor);
-                  addCarrinho("André", produto.toJson());
-                  Navigator.of(context).pop();
-                } else {
-                  return showMaterialModalBottomSheet(
-                      expand: false,
-                      backgroundColor: Colors.transparent,
-                      context: context,
-                      builder: (context) => ModalLojaDiferente(user: 'André', qnt: qnt, lojaId: widget.lojaId, produto: widget.produto,)
-                  );
-                }
-              }
-            },
-            child: Text(
-              'Adicionar',
-              style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.w600, color: AppColor.cobre),
-            ),
-          ),
+          user?.uid != null
+              ? GestureDetector(
+                  onTap: () async {
+                    final aux = await verificaLoja(widget.lojaId, user!.uid);
+                    final index =
+                        await verificaProduto(widget.produto.id, user!.uid);
+                    if (index >= 0) {
+                      final num valor = widget.produto.promocao
+                          ? widget.produto.novoValor
+                          : widget.produto.valor;
+                      final produto = ShopProd(
+                          idProduto: widget.produto.id,
+                          idLoja: widget.lojaId,
+                          quantidade: qnt,
+                          valor: valor);
+                      mudarQnt(user!.uid, index, qnt, produto.toJson());
+                      Navigator.of(context).pop();
+                    } else {
+                      if (aux == 1) {
+                        final num valor = widget.produto.promocao
+                            ? widget.produto.novoValor
+                            : widget.produto.valor;
+                        final produto = ShopProd(
+                            idProduto: widget.produto.id,
+                            idLoja: widget.lojaId,
+                            quantidade: qnt,
+                            valor: valor);
+                        addCarrinho(user!.uid, produto.toJson());
+                        Navigator.of(context).pop();
+                      } else {
+                        return showMaterialModalBottomSheet(
+                            expand: false,
+                            backgroundColor: Colors.transparent,
+                            context: context,
+                            builder: (context) => ModalLojaDiferente(
+                                  user: user!.uid,
+                                  qnt: qnt,
+                                  lojaId: widget.lojaId,
+                                  produto: widget.produto,
+                                ));
+                      }
+                    }
+                  },
+                  child: Text(
+                    'Adicionar',
+                    style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w600, color: AppColor.cobre),
+                  ),
+                )
+              : GestureDetector(
+                  onTap: () async {
+                    return showMaterialModalBottomSheet(
+                        expand: false,
+                        backgroundColor: Colors.transparent,
+                        context: context,
+                        builder: (context) => const ModalSemUser());
+                  },
+                  child: Text(
+                    'Adicionar',
+                    style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w600, color: AppColor.cobre),
+                  ),
+                ),
           const SizedBox(
             width: 10,
           ),

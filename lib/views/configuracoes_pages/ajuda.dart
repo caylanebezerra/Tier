@@ -1,9 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tier/colors.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tier/widgets/bottom_nav_bar.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+
 
 import '../main_lojas.dart';
 import '../perfil_pages/perfil_usuario.dart';
@@ -49,57 +50,43 @@ class _AjudaState extends State<Ajuda> {
         body:  Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Container(
+              height: 250,
+              width:  300,
+              decoration: const BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage(
+                        "images/central_atendimento.png",
+                      )
+                  )
+              ),
+            ),
+            const SizedBox(height: 30,),
             Center(
               child: RichText(
                 textAlign: TextAlign.center,
-                text: TextSpan( text: ' Ligue para nosso SAC', style: GoogleFonts.poppins( fontSize: 22, color: Colors.black)),
+                text: TextSpan( text: AppLocalizations.of(context)!.calloursac, style: GoogleFonts.poppins( fontSize: 22, color: Colors.black)),
               ),
             ),
             const SizedBox(height: 30,),
 
-            GestureDetector(
-              onTap: (){
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(
-                      builder: (widget) => _callNumber(),//colocar opção de ligar
-                    )
-                );
-              },
-              child: Container(
-                width: 150,
-                height: 40,
-                decoration: BoxDecoration(
-                    color: AppColor.amareloPrincipal.withOpacity(0.7),
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColor.cinzaBranco,
-                        blurRadius: 0.8,
-                        offset: const Offset(2, 2),
-                      ),
-                    ]
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Ligar',
-                          style: GoogleFonts.poppins(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: AppColor.textoBranco,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+        ElevatedButton(
+          child: Text(AppLocalizations.of(context)!.call),
+          onPressed: (){
+            _callNumber();
+          },
+          style: ElevatedButton.styleFrom(
+              primary: AppColor.amareloEscuro,
+              padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
-            )
-
+              textStyle:
+              GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: AppColor.textoBranco,)),
+        ),
           ],
         )
 
