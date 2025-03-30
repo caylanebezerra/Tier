@@ -14,4 +14,7 @@ Google Maps API: Localização de pets disponíveis para adoção.
 ✅ Marketplace de Produtos: Compra e venda de produtos para pets diretamente no aplicativo.
 ✅ Cadastro de Pets: Usuários podem cadastrar animais disponíveis para adoção, incluindo fotos e informações detalhadas.
 ✅ Autenticação Segura: Login via e-mail/senha ou Google para segurança dos usuários.
-- [Figma](https://www.figma.com/file/5cYblI2uaxwMJzOHSumVTg/Tier?node-id=198%3A4148)
+
+- [Design de telas no Figma](https://www.figma.com/file/5cYblI2uaxwMJzOHSumVTg/Tier?node-id=198%3A4148)
+- [Apresentação do aplicativo em vídeo](https://drive.google.com/file/d/1ogi-SMW7K5ejE1jMyJj0ykSMenkBvl0L/view)
+
